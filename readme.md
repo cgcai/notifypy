@@ -1,4 +1,4 @@
-#Notify.py
+Notify.py
 ===
 Sends an SMS to a target number when run.
 
@@ -18,3 +18,12 @@ Additional lines are ignored.
 Usage: `notify.py <id file> <message>`
 
 --Xofel.
+
+##Use Cases
+* Get notifed by SMS when your IDS trips.
+* Set your workstation to text you when it has finished running `make`.
+* Naïve notification when some one boots up your computer.
+
+##Future Work
+1. Execute `<command>` before sending SMS.
+2. Wait *n* seconds before sending SMS.

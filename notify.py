@@ -10,39 +10,58 @@
 # 3. Target Number
 # Additional lines are ignored.
 #
-# Usage: notify.py <id file> <message>
-#
 # --Xofel.
 
-import sys
 from urllib import urlencode
 import urllib2
 import json
+import argparse
+import os
+import time
 
-# Exit codes.
-_EXIT_SYNTAX = 1
 _HOIIO_SMS_API = "https://secure.hoiio.com/open/sms/send"
+_VERBOSE = False
 
 def main():
-	id_file, message = parse_args()
-	with open(id_file, "r") as f:
+	global _VERBOSE
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-v", "--verbose", action="store_true", help="turns on console output")
+	parser.add_argument("-t", "--test", action="store_true", help="test mode. Prints API call but does not send SMS")
+	parser.add_argument("-e", "--execute", help="command to execute using this script's permissions")
+	parser.add_argument("-w", "--wait", type=int, help="time in seconds to wait before notifying. If specified with --execute, the timer will start after the spawned process completes")
+	parser.add_argument("-s", "--stingy", action="store_true", help="refuse to send SMS if len(message) > 160. Always prints refusal regardless of --verbose")
+	parser.add_argument("identity", help="identity file to use")
+	parser.add_argument("message", help="content of SMS to send")
+	args = parser.parse_args()
+
+	if args.verbose:
+		_VERBOSE = True
+
+	with open(args.identity, "r") as f:
 		appid = f.readline().strip()
+		log("App ID: " + appid)
 		token = f.readline().strip()
+		log("App Token: " + token)
 		dest = f.readline().strip()
+		log("Dest: " + dest)
 
-	send_sms(appid, token, dest, message)
+	if args.execute:
+		log("Executing: " + args.execute)
+		proc = os.system(args.execute)
+		log("Process completed.")
 
-def parse_args():
-	if len(sys.argv) != 3:
-		print usage()
-		sys.exit(_EXIT_SYNTAX)
+	if args.wait:
+		log("Sleeping for " + str(args.wait))
+		time.sleep(args.wait)
 
-	id_file = str(sys.argv[1])
-	message = str(sys.argv[2])
+	if len(args.message) > 160 and args.stingy:
+		log("Refusing to send long message", always=True)
+	else:
+		log("Sending: " + args.message)
+		send_sms(appid, token, dest, args.message, testmode=args.test)
 
-	return (id_file, message)
-
-def send_sms(appid, token, dest, message):
+def send_sms(appid, token, dest, message, testmode=False):
 	request_data = {
 		"app_id" : appid,
 		"access_token" : token,
@@ -51,17 +70,21 @@ def send_sms(appid, token, dest, message):
 	}
 
 	url = _HOIIO_SMS_API + "?" + urlencode(request_data)
-	req = urllib2.Request(url)
-	resp_data = urllib2.urlopen(req).read()
-
-	resp = json.loads(resp_data)
-	if "status" in resp.keys() and resp["status"] == "success_ok":
-		print "SMS sent."
+	if testmode:
+		print url
 	else:
-		print "Failed to send SMS."
+		req = urllib2.Request(url)
+		resp_data = urllib2.urlopen(req).read()
 
-def usage():
-	return "usage: notify.py <id file> <message>"
+		resp = json.loads(resp_data)
+		if "status" in resp.keys() and resp["status"] == "success_ok":
+			log("SMS sent.")
+		else:
+			log("Failed to send SMS.")
+
+def log(message, always=False):
+	if _VERBOSE or always:
+		print message
 
 if __name__ == '__main__':
 	main()

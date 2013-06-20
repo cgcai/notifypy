@@ -15,8 +15,6 @@ The id file should consist of the following lines with no leading or trailing ch
 
 Additional lines are ignored.
 
-Usage: `notify.py <id file> <message>`
-
 --Xofel.
 
 ##Use Cases

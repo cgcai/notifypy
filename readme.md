@@ -20,7 +20,3 @@ Additional lines are ignored.
 * Get notifed by SMS when your IDS trips.
 * Set your workstation to text you when it has finished running `make`.
 * Naïve notification when some one boots up your computer.
-
-##Future Work
-1. Execute `<command>` before sending SMS.
-2. Wait *n* seconds before sending SMS.

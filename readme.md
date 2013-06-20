@@ -4,7 +4,7 @@ Sends an SMS to a target number when run.
 
 This script should be chained in a shell command:
 
-`$ do_something_long && sleep 5 && notify.py "something is done!`
+`$ do_something_long && notify.py -w 5 "something is done!`
 
 ##Usage
 

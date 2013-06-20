@@ -4,7 +4,7 @@ Sends an SMS to a target number when run.
 
 This script should be chained in a shell command:
 
-`$ do_something_long && sleep 5 && notify "something is done!`
+`$ do_something_long && sleep 5 && notify.py "something is done!`
 
 ##Usage
 
@@ -38,7 +38,10 @@ The id file should consist of the following lines with no leading or trailing ch
 
 Additional lines are ignored.
 
+You should create a [Hoiio Developer Account](http://developer.hoiio.com/) and a Hoiio App in order to get the values for App Id and Access Token. Note that if you're rolling with trial credits, the target phone number can only be the number you signed up with. 
+
 ##Use Cases
 * Get notifed by SMS when your IDS trips.
 * Set your workstation to text you when it has finished running `make`.
 * Naïve notification when some one boots up your computer.
+* Send SMS on a `cron` job!

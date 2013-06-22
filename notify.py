@@ -87,6 +87,7 @@ def send_sms(appid, token, dest, message, testmode=False):
 			log("SMS sent.")
 		else:
 			log("Failed to send SMS.")
+
 def log(message, always=False):
 	if _VERBOSE or always:
 		print message
